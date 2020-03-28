@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<button type="button" id='send'>发送</button>
+		<script type="text/javascript">
+			// let path = 'ws://localhost'
+			// let port = '8080'
+			// let ws = new WebSocket(path + ':' + port)
+			var ws = new WebSocket("ws://192.168.10.59:8080/hub/uncertainty__bCJMJqJnBt");
+			ws.onopen = (evt) => {
+				console.log('连上')
+				// ws.send('12313')
+			}
+			ws.onmessage = (evt) => {
+				console.info('收到信息', evt.data)
+			}
+			ws.onerror = () => {
+				console.info('出错饿了')
+			}
+			ws.onclose = () => {
+				console.info('关闭了')
+			}
+			let btn = document.querySelector('#send')
+			btn.onclick = () => {
+				ws.send('{"a":"王","b":456,"pos":11}')
+			}
+			window.onbeforeunload = function(event) {
+			    ws.onclose()
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title></title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<!-- <link id="togetherjs-stylesheet" rel="stylesheet" href="https://togetherjs.com/togetherjs/togetherjs.css?bust=1585123582274"> -->
+	</head>
+<style>
+	textarea{
+		width: 500px;
+		height: 300px;
+		border: 1px solid #666;
+	}
+</style>
+<body>
+	<script>
+	  TogetherJSConfig_autoStart = true
+	  TogetherJSConfig_findRoom = {prefix: "uncertainty", max: 6};
+	  var TogetherJSConfig_hubBase ="http://192.168.10.59:8080"//"http://127.0.0.1:8080";
+	  TogetherJSConfig_getUserName = function () {return ('测不准' + Math.random()).substring(0,8);};
+	  TogetherJSConfig_getUserAvatar = function () {return 'https://togetherjs.com/images/site-features-user-presence@2x.png';};
+	  // TogetherJSConfig_getUserColor = function () {return 'pink';};
+	  
+	</script>
+	<!-- <script src="https://togetherjs.com/togetherjs-min.js"></script>	 -->
+	<script src="./togetherjs/together.js"></script>
+	
+	<button id="start-togetherjs" onclick="TogetherJS(this); return false;" data-end-togetherjs-html='结束'>Start TogetherJS</button>
+	<button id="intoClass" type="button">上课</button>
+	<div id='app'>
+		<button type="button" @click='changeIndex'>changeIndex</button>
+		<img :src="imgList[index]" alt="" style='width: 480px;height: 240px;'>
+		
+	</div>
+	
+	<script>
+		// setInterval(() => {
+		// 	console.clear()
+		// },10000)
+		new Vue({
+			el:'#app',
+			data: {
+				imgList: ['./img/1.jpg','./img/2.jpg','./img/3.jpg','./img/4.jpg'],
+				index:0
+			},
+			mounted() {
+				let _this = this
+				TogetherJS.hub.on("reuvenTest", function (msg) {
+					console.log("我收到了: " , msg)
+					
+					_this.index = msg.index
+				 }
+				);
+			},
+			methods: {
+				changeIndex() {
+					this.index++
+					if (this.index > 3) {
+						this.index = 0
+					}
+					TogetherJS.send({
+						type: "reuvenTest", 
+						index: this.index,
+					});
+				}
+			}
+		})
+	</script>
+	
+	
+	<script>
+		let intoClass = document.querySelector('#intoClass')
+		intoClass.onclick = () => {
+			console.log(12)
+			TogetherJS.config("findRoom", {prefix: "teacherId", max: 3});
+			TogetherJS(this);
+			return false;
+		}
+		TogetherJS.refreshUserData()
+		$(function () {
+		  $("#start-togetherjs").click(TogetherJS);
+		});
+		
+		let arr = document.getElementsByTagName('iframe')
+		for (let i = 0; i < arr.length; i++) {
+			arr[i].parentNode.removeChild(arr[i])
+		}
+		
+	</script>
+</body>
+</html>
